@@ -6,7 +6,7 @@
 // @author       Mathy Vanhoef
 // @match        https://www.ieee-security.org/TC/SP2020/program-compact.html
 // @match        https://www.ieee-security.org/TC/SP2020/program.html
-// @match        https://gateway.on24.com/wcc/gateway/*
+// @match        https://gateway.on24.com/wcc/*
 // @require      http://code.jquery.com/jquery-3.5.1.min.js
 // @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
 // @require      https://momentjs.com/downloads/moment.min.js
@@ -23,13 +23,27 @@ waitForKeyElements (
     "h2.link", updateTimeOn24
 );
 waitForKeyElements (
+    ".time label", updateTimeOn24Event
+);
+waitForKeyElements (
+    "b", updateTimeOn24Event
+);
+waitForKeyElements (
     ".text-right", updateTime
 );
 
 function convertTime(timeStr) {
-    var origTime = moment.tz(timeStr, "hh:mma", pagesTimezone);
+    var ts1 = "";
+    var ts2 = timeStr;
+    if (timeStr.includes("2020")) {
+        var ts = timeStr.split("2020", 2);
+        ts1 = ts[0];
+        ts2 = ts[1];
+    }
+
+    var origTime = moment.tz(ts2, "hh:mma", pagesTimezone);
     var localTime = origTime.tz(desiredTimezone).format("h:mmA");
-    return localTime;
+    return ts1 + localTime;
 }
 
 function updateTime(jNode) {
@@ -60,5 +74,14 @@ function updateTimeOn24(jNode) {
         var start = convertTimeOn24(times[0].split("(")[1]);
         var end = convertTimeOn24(times[1].split(" ")[0]);
         jNode.text(times[0].split("(")[0] + "(" + start + " - " + end + ")");
+    }
+}
+
+function updateTimeOn24Event(jNode) {
+    var t1 = jNode.text();
+    if (t1.includes("PDT")) {
+        console.log(t1);
+        var t2 = convertTime(t1);
+        jNode.text(t2);
     }
 }
