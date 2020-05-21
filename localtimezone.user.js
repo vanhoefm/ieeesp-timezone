@@ -6,6 +6,7 @@
 // @author       Mathy Vanhoef
 // @match        https://www.ieee-security.org/TC/SP2020/program-compact.html
 // @match        https://www.ieee-security.org/TC/SP2020/program.html
+// @match        http://spw20.langsec.org/workshop-program.html
 // @match        https://gateway.on24.com/wcc/*
 // @require      http://code.jquery.com/jquery-3.5.1.min.js
 // @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
@@ -83,5 +84,16 @@ function updateTimeOn24Event(jNode) {
         console.log(t1);
         var t2 = convertTime(t1);
         jNode.text(t2);
+    } else if (t1.includes("-")) {
+        var times = t1.trim().split("-");
+        if (times.length == 2 && times[0].indexOf(" ") == -1) {
+            console.log(times);
+            if (times[0].indexOf("m") == -1) {
+                times[0] = times[0] + (times[1].slice(-2));
+            }
+            var start = convertTimeOn24(times[0].replace(":", ""));
+            var end = convertTimeOn24(times[1].replace(":", ""));
+            jNode.text(start + "-" + end);
+        }
     }
 }
