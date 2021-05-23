@@ -44,6 +44,9 @@ function convertTime(timeStr) {
     }
 
     var origTime = moment.tz(ts2, "hh:mma", pagesTimezone);
+    if (isNaN(origTime)) {
+        return timeStr;
+    }
     var targetFormat = (use24HourFormat == true) ? "HH:mm" : "hh:mma";
     var localTime = origTime.tz(desiredTimezone).format(targetFormat);
 
@@ -63,6 +66,9 @@ function convertTimeOn24(timeStr) {
         timeStr = timeStr.replace("am", "00am").replace("pm", "00pm");
     }
     var origTime = moment.tz(timeStr, "hmma", pagesTimezone);
+    if (isNaN(origTime)) {
+        return timeStr;
+    }
     var localTime = origTime.tz(desiredTimezone).format("h:mmA");
     return localTime;
 }
